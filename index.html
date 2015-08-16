@@ -1,0 +1,83 @@
+<html lang="en">
+  <head>
+    <title>What's Up Chi?</title>
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="js/xml2json.js"></script>
+    <script src="js/tile.stamen.js"></script>
+    <link href='http://fonts.googleapis.com/css?family=Catamaran:400,500' rel='stylesheet' type='text/css'>
+    <style>
+      #map { height: 100%; }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+  </body>
+  <script>
+    var map = L.map('map').setView([41.8369, -87.6847], 11);
+    var layer = new L.StamenTileLayer("toner-lite");
+    layer.minZoom = 0;
+    layer.maxZoom = 20;
+    layer.ext = 'png';
+    layer.addTo(map);
+
+    function makeLink (title, url) {
+      return '<h3><a href=' + url + ' target="_blank">' + title + '</a></h3>(via DNAInfo Chicago)'
+    }
+
+    function getArticlesFromDnaInfoChi () {
+
+      var dna_info_chi_url = 'https://www.dnainfo.com/chicago/index/all'
+
+      var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from xml where url="' + dna_info_chi_url + '"') + '&format=xml&callback=?';
+
+      var lat_long_by_neighborhood = {
+        'lincoln-park': [41.9200, -87.6500],
+        'little-village': [41.8500, -87.7100],
+        'logan-square': [41.9283, -87.7067],
+        'loop': [41.881832, -87.623177],
+        'downtown': [41.881832, -87.623177],
+        'lakeview': [41.94352, -87.654102],
+        'river-north': [41.9, -87.63],
+        'albany-park': [41.97, -87.72],
+        'little-italy': [41.871, -87.659],
+        'wicker-park': [41.9075, -87.676944],
+        'uptown': [41.97, -87.66],
+        'chatham': [41.74,-87.611667]
+      }
+
+      $.getJSON(yql, function(data) {
+        var rss = data.results[0]
+        var xmlDoc = $.parseXML(rss)
+        var jsonDoc = $.xml2json(xmlDoc)
+        var items = jsonDoc['channel']['item'];
+        for (i = 0; i < items.length; i ++) {
+          var item = items[i];
+          var title = item.title;
+          var url = item.link;
+          var neighborhood = url.split('/')[5];
+          var article = {};
+          article.location = lat_long_by_neighborhood[neighborhood];
+          article.title = title;
+          article.url = url;
+          article.source = 'DNAinfo Chicago';
+          var marker = L.marker(article.location);
+          marker.bindPopup(makeLink(article.title, article.url));
+          marker.addTo(map);
+          markers.push(marker);
+        };
+        blinkPopUps();
+      });
+    }
+
+    function blinkPopUps () {
+      var random_marker = markers[Math.floor(Math.random() * markers.length)];
+      random_marker.openPopup();
+    }
+
+    var markers = [];
+    getArticlesFromDnaInfoChi()
+    setInterval(blinkPopUps, 6000);
+  </script>
+</html>
