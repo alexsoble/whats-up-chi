@@ -1,0 +1,22 @@
+* {
+  font-family: 'Catamaran', sans-serif;
+}
+#map {
+  height: 100%;
+}
+#explainer {
+  width: 30%;
+  position: absolute;
+  height: 260px;
+  padding: 0 30px 0 30px;
+  bottom: 0px;
+  left: 0px;
+  background-color: white;
+  z-index: 10;
+  border: 1px solid #F589A6;
+}
+#links a, .question {
+  font-family: 'Oswald', sans-serif;
+  color: #9F0A32;
+  margin-bottom: -10px;
+}
