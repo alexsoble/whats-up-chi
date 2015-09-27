@@ -4,8 +4,9 @@
     <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
     <script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-    <script src="js/xml2json.js"></script>
-    <script src="js/tile.stamen.js"></script>
+    <script src="js/neighborhoods.js"></script>
+    <script src="js/vendor/xml2json.js"></script>
+    <script src="js/vendor/tile.stamen.js"></script>
     <link href='http://fonts.googleapis.com/css?family=Catamaran:400,500' rel='stylesheet' type='text/css'>
     <style>
       #map { height: 100%; }
@@ -32,28 +33,6 @@
 
       var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from xml where url="' + dna_info_chi_url + '"') + '&format=xml&callback=?';
 
-      var lat_long_by_neighborhood = {
-        'lincoln-park': [41.9200, -87.6500],
-        'little-village': [41.8500, -87.7100],
-        'logan-square': [41.9283, -87.7067],
-        'loop': [41.881832, -87.623177],
-        'downtown': [41.881832, -87.623177],
-        'lakeview': [41.94352, -87.654102],
-        'river-north': [41.9, -87.63],
-        'albany-park': [41.97, -87.72],
-        'little-italy': [41.871, -87.659],
-        'wicker-park': [41.9075, -87.676944],
-        'uptown': [41.97, -87.66],
-        'chatham': [41.74,-87.611667],
-        'hyde-park': [41.8, -87.59],
-        'bronzeville': [41.83, -87.62],
-        'west-loop': [41.87, -87.67],
-        'humboldt-park': [41.88, -87.7],
-        'irving-park': [41.95, -87.73],
-        'wrigleyville': [41.95, -87.655],
-        'rogers-park': [42.01, -87.67 ]
-      }
-
       $.getJSON(yql, function(data) {
         var rss = data.results[0]
         var xmlDoc = $.parseXML(rss)
@@ -65,14 +44,19 @@
           var url = item.link;
           var neighborhood = url.split('/')[5];
           var article = {};
-          article.location = lat_long_by_neighborhood[neighborhood];
-          article.title = title;
-          article.url = url;
-          article.source = 'DNAinfo Chicago';
-          var marker = L.marker(article.location);
-          marker.bindPopup(makeLink(article.title, article.url));
-          marker.addTo(map);
-          markers.push(marker);
+          if (Neighborhoods[neighborhood]) {
+            article.location = Neighborhoods[neighborhood];
+            article.title = title;
+            article.url = url;
+            article.source = 'DNAinfo Chicago';
+            var marker = L.marker(article.location);
+            marker.bindPopup(makeLink(article.title, article.url));
+            marker.addTo(map);
+            markers.push(marker);
+          } else {
+            // neighborhood lat long not known yet, let's add to hash
+            console.log(neighborhood);
+          }
         };
         blinkPopUps();
       });
