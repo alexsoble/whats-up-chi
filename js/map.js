@@ -7,7 +7,7 @@ $(function() {
   layer.ext = 'png';
   layer.addTo(map);
 
-  var articles = new Articles
-  articles.getFromDnaInfoChi(map);
+  var news = new News;
+  news.getFromDnaInfoChi(map);
 
 });
