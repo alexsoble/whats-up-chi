@@ -19,7 +19,8 @@
     'humboldt-park': [41.88, -87.7],
     'irving-park': [41.95, -87.73],
     'wrigleyville': [41.95, -87.655],
-    'rogers-park': [42.01, -87.67]
+    'rogers-park': [42.01, -87.67],
+    'woodlawn': [41.78, -87.6]
   };
 
   root.Neighborhoods = Neighborhoods;
