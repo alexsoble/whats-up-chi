@@ -5,7 +5,6 @@
     <script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <script src="js/neighborhoods.js"></script>
-    <script src="js/vendor/xml2json.js"></script>
     <script src="js/vendor/tile.stamen.js"></script>
     <script src="js/vendor/leaflet.markercluster-src.js"></script>
     <link href='https://fonts.googleapis.com/css?family=Oswald:400,700|Catamaran|Montserrat' rel='stylesheet' type='text/css'>
@@ -41,15 +40,12 @@
 
       var dna_info_chi_url = 'https://www.dnainfo.com/chicago/index/all'
 
-      var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from xml where url="' + dna_info_chi_url + '"') + '&format=xml&callback=?';
+      var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from xml where url="' + dna_info_chi_url + '"') + '&format=json&callback=?';
 
       var markers = new L.MarkerClusterGroup();
 
       $.getJSON(yql, function(data) {
-        var rss = data.results[0]
-        var xmlDoc = $.parseXML(rss)
-        var jsonDoc = $.xml2json(xmlDoc)
-        var items = jsonDoc['channel']['item'];
+        var items = data.query.results.rss.channel.item;
         for (i = 0; i < items.length; i ++) {
           var item = items[i];
           var title = item.title;
