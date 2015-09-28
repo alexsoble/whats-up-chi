@@ -7,8 +7,10 @@
     <script src="js/neighborhoods.js"></script>
     <script src="js/vendor/xml2json.js"></script>
     <script src="js/vendor/tile.stamen.js"></script>
+    <script src="js/vendor/leaflet.markercluster-src.js"></script>
     <link href='https://fonts.googleapis.com/css?family=Oswald:400,700|Catamaran|Montserrat' rel='stylesheet' type='text/css'>
     <link href='stylesheets/main.css' rel='stylesheet' type='text/css'>
+    <link href='stylesheets/vendor/MarkerCluster.Default.css' rel='stylesheet' type='text/css'>
   </head>
   <body>
     <div id="map"></div>
@@ -41,6 +43,8 @@
 
       var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from xml where url="' + dna_info_chi_url + '"') + '&format=xml&callback=?';
 
+      var markers = new L.MarkerClusterGroup();
+
       $.getJSON(yql, function(data) {
         var rss = data.results[0]
         var xmlDoc = $.parseXML(rss)
@@ -60,23 +64,28 @@
             var marker = L.marker(article.location);
             marker.bindPopup(makeLink(article.title, article.url));
             marker.addTo(map);
-            markers.push(marker);
+            markers.addLayer(marker);
           } else {
             // neighborhood lat long not known yet, let's add to hash
             console.log(neighborhood);
           }
         };
-        blinkPopUps();
+        map.addLayer(markers);
+        window.marker_array = [];
+        markers.eachLayer(function (layer) {
+          window.marker_array.push(layer);
+        });
+        blinkPopUps(window.marker_array);
+        setInterval(blinkPopUps, 6000, window.marker_array);
       });
     }
 
-    function blinkPopUps () {
+    function blinkPopUps (markers) {
       var random_marker = markers[Math.floor(Math.random() * markers.length)];
       random_marker.openPopup();
     }
 
     var markers = [];
     getArticlesFromDnaInfoChi()
-    setInterval(blinkPopUps, 6000);
   </script>
 </html>
