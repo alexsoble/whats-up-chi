@@ -23,6 +23,19 @@
     'woodlawn': [41.78, -87.6]
   };
 
+  var LatLong = function (neighborhood) {
+    this.latlong = Neighborhoods[neighborhood];
+  };
+
+  LatLong.prototype.addRandomness = function () {
+    return [
+      this.latlong[0] + (Math.random() / 1000 - 0.0005),
+      this.latlong[1] + (Math.random() / 1000 - 0.0005)
+    ]
+  }
+
+  root.LatLong = LatLong;
   root.Neighborhoods = Neighborhoods;
 
 })(window)
+

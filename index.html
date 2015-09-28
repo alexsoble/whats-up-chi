@@ -57,7 +57,7 @@
           var neighborhood = url.split('/')[5];
           var article = {};
           if (Neighborhoods[neighborhood]) {
-            article.location = Neighborhoods[neighborhood];
+            article.location = new LatLong(neighborhood).addRandomness();
             article.title = title;
             article.url = url;
             article.source = 'DNAinfo Chicago';
