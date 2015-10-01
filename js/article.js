@@ -6,16 +6,18 @@
     this.neighborhood = url.split('/')[5];
   };
 
+  var newsIcon = L.icon({
+    iconUrl: 'images/marker-24@2x.png',
+    popupAnchor:  [25, 0]
+  });
+
   Article.prototype.toMarker = function () {
     if (Neighborhoods[this.neighborhood]) {
-      var article = {};
       var self = this;
-      article.location = new LatLong(this.neighborhood).addRandomness();
-      article.title = this.title;
-      article.url = this.url;
-      article.source = 'DNAinfo Chicago';
-      var marker = L.marker(article.location);
-      marker.bindPopup(self.makeLink(article.title, article.url));
+      var location = new LatLong(self.neighborhood).addRandomness();
+      var marker = L.marker(location, { icon: newsIcon });
+      var popupContent = self.popupContent();
+      marker.bindPopup(popupContent);
       return marker;
     } else {
       // neighborhood lat long not known yet, let's add to hash
@@ -37,7 +39,7 @@
     });
   };
 
-  Article.prototype.makeLink = function makeLink () {
+  Article.prototype.popupContent = function makePopupContent () {
     return '<h3><a href=' + this.url +
            ' target="_blank">' + this.title +
            '</a></h3>(via DNAInfo Chicago)'
