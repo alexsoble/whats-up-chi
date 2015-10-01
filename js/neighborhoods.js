@@ -20,7 +20,13 @@
     'irving-park': [41.95, -87.73],
     'wrigleyville': [41.95, -87.655],
     'rogers-park': [42.01, -87.67],
-    'woodlawn': [41.78, -87.6]
+    'woodlawn': [41.78, -87.6],
+    'back-of-yards': [41.81, -87.66],
+    'old-town': [41.9111, -87.6395],
+    'jefferson-park': [41.98, -87.77],
+    'river-west': [41.89, -87.645],
+    'boystown': [41.94352, -87.654102],
+    'brighton-park': [41.82, -87.7]
   };
 
   var LatLong = function (neighborhood) {
