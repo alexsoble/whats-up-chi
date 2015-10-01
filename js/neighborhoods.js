@@ -26,7 +26,14 @@
     'jefferson-park': [41.98, -87.77],
     'river-west': [41.89, -87.645],
     'boystown': [41.94352, -87.654102],
-    'brighton-park': [41.82, -87.7]
+    'brighton-park': [41.82, -87.7],
+    'morgan-park': [41.69, -87.67],
+    'pilsen': [41.85, -87.66],
+    'kenwood': [41.81, -87.6],
+    'austin': [41.9, -87.76],
+    'mt-greenwood': [41.7, -87.71],
+    'north-center': [41.95, -87.68],
+    'south-loop': [41.88, -87.63]
   };
 
   var LatLong = function (neighborhood) {
