@@ -33,7 +33,12 @@
     'austin': [41.9, -87.76],
     'mt-greenwood': [41.7, -87.71],
     'north-center': [41.95, -87.68],
-    'south-loop': [41.88, -87.63]
+    'south-loop': [41.88, -87.63],
+    'englewood': [41.779, -87.644],
+    'streeterville': [41.893, -87.619],
+    'grand-crossing': [41.76, -87.61],
+    'lincoln-square': [41.97, -87.69],
+    'pullman': [41.71, -87.62]
   };
 
   var LatLong = function (neighborhood) {
