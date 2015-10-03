@@ -14,6 +14,7 @@
   Article.prototype.toMarker = function () {
     if (Neighborhoods[this.neighborhood]) {
       var self = this;
+      var exact_location = this.addresses();
       var location = new LatLong(self.neighborhood).addRandomness();
       var marker = L.marker(location, { icon: newsIcon });
       var popupContent = self.popupContent();
@@ -28,13 +29,17 @@
   Article.prototype.addresses = function () {
     var item_yql = (new YqlArticleQuery(this.url)).fullQuery();
     var chi_address_regex = /([0-9]+)[ ][NWSE][.][ ]([+\w]+)[ ]([+\w]+)/
+
     $.getJSON(item_yql, function(data) {
       var query_results = data.query.results;
-      var addresses = chi_address_regex.exec(query_results);
-      if (addresses) {
-        console.log(addresses[0]);
-        // now we can Geocode!
-        // https://developers.google.com/maps/documentation/javascript/geocoding
+      var address_strings = chi_address_regex.exec(query_results);
+      if (address_strings) {
+        var address = new Address(address_strings[0]);
+        address.toLatLong().then(function(response) {
+          console.log("Success!", response);
+        }, function(error) {
+          console.log("Failed!", error);
+        });
       }
     });
   };
