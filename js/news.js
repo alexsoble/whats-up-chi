@@ -18,10 +18,12 @@
     var items = data.query.results.rss.channel.item;
     for (i = 0; i < items.length; i ++) {
       var item = items[i];
-      var article = new Article(item.link, item.title).toMarker();
-      if (article) {
-        markers.addLayer(article);
-      }
+      var article = new Article(item.link, item.title)
+      article.toMarker().then(function(response) {
+        markers.addLayer(response);
+      }, function(error) {
+        reject(Error("Failed!" + error));
+      });
     };
     var controller = new ArticlesController(map, markers);
     controller.show();

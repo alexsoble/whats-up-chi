@@ -14,7 +14,8 @@ function initializeGeocoder () {
     return new Promise(function(resolve, reject) {
       Geocoder.geocode({ 'address': full_string }, function(results, status) {
         if (status === GoogleMaps.GeocoderStatus.OK) {
-          resolve(results[0].geometry.location);
+          var r = results[0].geometry.location;
+          resolve([r['H'], r['L']]);
         } else {
           reject(Error('Geocode was not successful for the following reason: ' + status));
         }

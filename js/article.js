@@ -12,36 +12,54 @@
   });
 
   Article.prototype.toMarker = function () {
-    if (Neighborhoods[this.neighborhood]) {
-      var self = this;
-      var exact_location = this.addresses();
-      var location = new LatLong(self.neighborhood).addRandomness();
-      var marker = L.marker(location, { icon: newsIcon });
-      var popupContent = self.popupContent();
-      marker.bindPopup(popupContent);
-      return marker;
-    } else {
-      // neighborhood lat long not known yet, let's add to hash
-      console.log(this.neighborhood);
-    }
+    var self = this;
+    return new Promise(function (resolve, reject) {
+      self.getFullText().then(function(response) {
+        self.fullText = response;
+        var addresses = self.getAddressess();  // regex for Chi-like addressess
+        if (addresses) {
+          // we have an address match in the article text!
+          new Address(addresses[0]).toLatLong().then(function(response) {
+            resolve(self.makeMarker(response));
+          }, function(error) {
+            reject(Error("Failed!" + error));
+          });
+        } else {
+          // no addresses found, so let's fallback to  neighborhood
+          if (Neighborhoods[self.neighborhood]) {
+            var location = new LatLong(self.neighborhood).addRandomness();
+            resolve(self.makeMarker(location));
+          } else {
+            // neighborhood lat-long not known yet
+            console.log(self.neighborhood);
+          }
+        }
+      }, function(error) {
+        reject(Error("Failed!" + error));
+      });
+    });
   };
 
-  Article.prototype.addresses = function () {
-    var item_yql = (new YqlArticleQuery(this.url)).fullQuery();
-    var chi_address_regex = /([0-9]+)[ ][NWSE][.][ ]([+\w]+)[ ]([+\w]+)/
+  Article.prototype.makeMarker = function (location) {
+    var marker = L.marker(location, { icon: newsIcon });
+    var popupContent = this.popupContent();
+    marker.bindPopup(popupContent);
+    return marker;
+  }
 
-    $.getJSON(item_yql, function(data) {
-      var query_results = data.query.results;
-      var address_strings = chi_address_regex.exec(query_results);
-      if (address_strings) {
-        var address = new Address(address_strings[0]);
-        address.toLatLong().then(function(response) {
-          console.log("Success!", response);
-        }, function(error) {
-          console.log("Failed!", error);
-        });
-      }
+  Article.prototype.getFullText = function () {
+    var item_yql = (new YqlArticleQuery(this.url)).fullQuery();
+    return new Promise(function(resolve, reject) {
+      $.getJSON(item_yql, function(data) {
+        resolve(data.query.results);
+      });
     });
+  }
+
+  Article.prototype.getAddressess = function () {
+    var chi_address_regex = /([0-9]+)[ ][NWSE][.][ ]([+\w]+)[ ]([+\w]+)/
+    var article_text = this.fullText;
+    return chi_address_regex.exec(article_text);
   };
 
   Article.prototype.popupContent = function makePopupContent () {
