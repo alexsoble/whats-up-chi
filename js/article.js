@@ -4,12 +4,19 @@
     this.url = url;
     this.title = title;
     this.neighborhood = url.split('/')[5];
+    this.hasExactAddress = false   // until we get full text back
+    this.address = null;
+    this.displayNeighborhood = null;
   };
 
   var newsIcon = L.icon({
     iconUrl: 'images/marker-24@2x.png',
     popupAnchor:  [25, 0]
   });
+
+  String.prototype.capitalizeFirstLetter = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+  }
 
   Article.prototype.toMarker = function () {
     var self = this;
@@ -19,7 +26,9 @@
         var addresses = self.getAddressess();  // regex for Chi-like addressess
         if (addresses) {
           // we have an address match in the article text!
-          new Address(addresses[0]).toLatLong().then(function(response) {
+          self.hasExactAddress = true;
+          self.address = addresses[0];
+          new Address(self.address).toLatLong().then(function(response) {
             resolve(self.makeMarker(response));
           }, function(error) {
             reject(Error("Failed!" + error));
@@ -28,6 +37,8 @@
           // no addresses found, so let's fallback to  neighborhood
           if (Neighborhoods[self.neighborhood]) {
             var location = new LatLong(self.neighborhood).addRandomness();
+            self.displayNeighborhood = self.neighborhood.replace("-", " ")
+                                          .capitalizeFirstLetter();
             resolve(self.makeMarker(location));
           } else {
             // neighborhood lat-long not known yet
@@ -63,9 +74,17 @@
   };
 
   Article.prototype.popupContent = function makePopupContent () {
-    return '<h3><a href=' + this.url +
-           ' target="_blank">' + this.title +
-           '</a></h3>(via DNAInfo Chicago)'
+    var content = '<h3><a href=' + this.url +' target="_blank">' +
+                  this.title + '</a></h3>';
+
+    if (this.hasExactAddress) {
+      content += ('<strong>Address mentioned:</strong><br/>' + this.address);
+    } else {
+      content += ('<strong>Neighborhood mentioned:</strong><br/>' + this.displayNeighborhood);
+    }
+
+    content += '<p>(via DNAInfo Chicago)</p>';
+    return content;
   };
 
   root.Article = Article;
