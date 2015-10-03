@@ -14,10 +14,6 @@
     popupAnchor:  [25, 0]
   });
 
-  String.prototype.capitalizeFirstLetter = function() {
-    return this.charAt(0).toUpperCase() + this.slice(1);
-  }
-
   Article.prototype.toMarker = function () {
     var self = this;
     return new Promise(function (resolve, reject) {
@@ -37,8 +33,7 @@
           // no addresses found, so let's fallback to  neighborhood
           if (Neighborhoods[self.neighborhood]) {
             var location = new LatLong(self.neighborhood).addRandomness();
-            self.displayNeighborhood = self.neighborhood.replace("-", " ")
-                                          .capitalizeFirstLetter();
+            self.displayNeighborhood = self.neighborhood.replace("-", " ").capitalize();
             resolve(self.makeMarker(location));
           } else {
             // neighborhood lat-long not known yet
