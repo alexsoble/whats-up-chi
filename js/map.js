@@ -10,4 +10,5 @@ $(function() {
   var news = new News;
   news.getFromDnaInfoChi(map);
 
+
 });
