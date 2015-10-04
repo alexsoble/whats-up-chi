@@ -63,7 +63,7 @@
   }
 
   Article.prototype.getAddressess = function () {
-    var chi_address_regex = /([0-9]+)[ ][NWSE][.][ ]([+\w]+)[ ]([+\w]+)/
+    var chi_address_regex = /([0-9]+)[ ][NWSE][.][ ]([+\w]+)/
     var article_text = this.fullText;
     return chi_address_regex.exec(article_text);
   };
@@ -79,7 +79,7 @@
     }
 
     content += '<p>(via DNAInfo Chicago)</p>';
-    return content;
+    return L.popup({ maxWidth: 240 }).setContent(content);
   };
 
   root.Article = Article;
