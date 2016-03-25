@@ -38,7 +38,8 @@
     'streeterville': [41.893, -87.619],
     'grand-crossing': [41.76, -87.61],
     'lincoln-square': [41.97, -87.69],
-    'pullman': [41.71, -87.62]
+    'pullman': [41.71, -87.62],
+    'ravenswood': [41.97, -87.67]
   };
 
   var LatLong = function (neighborhood) {
