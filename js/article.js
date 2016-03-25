@@ -46,12 +46,16 @@
     var self = this;
     if (Neighborhoods[self.neighborhood]) {
       var location = new LatLong(self.neighborhood).addRandomness();
-      self.displayNeighborhood = self.neighborhood.replace("-", " ").capitalize();
+      self.setDisplayNeighborhood();
       resolve(self.makeMarker(location));
     } else {
       // neighborhood lat-long not known yet
       console.log(self.neighborhood);
     }
+  };
+
+  Article.prototype.setDisplayNeighborhood = function() {
+    this.displayNeighborhood = this.neighborhood.replace("-", " ").capitalize();
   };
 
   Article.prototype.makeMarker = function (location) {
