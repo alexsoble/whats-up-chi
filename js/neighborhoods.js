@@ -48,10 +48,20 @@
 
   LatLong.prototype.addRandomness = function () {
     return [
-      this.latlong[0] + (Math.random() / 1000 - 0.0005),
-      this.latlong[1] + (Math.random() / 1000 - 0.0005)
+      this.latlong[0] + this.generateRandomness(),
+      this.latlong[1] + this.generateRandomness()
     ]
   }
+
+  LatLong.prototype.generateRandomness = function() {
+    var randomAbsoluteValue = Math.random() / 200;
+    var randomDirection = Math.random() < .5;
+
+    var randomValue = randomAbsoluteValue;
+    if (randomDirection) randomValue = -randomValue;
+
+    return randomValue;
+  };
 
   root.LatLong = LatLong;
   root.Neighborhoods = Neighborhoods;
