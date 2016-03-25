@@ -21,29 +21,37 @@
         self.fullText = response;
         var addresses = self.getAddressess();  // regex for Chi-like addressess
         if (addresses) {
-          // we have an address match in the article text!
           self.hasExactAddress = true;
           self.address = addresses[0];
-          new Address(self.address).toLatLong().then(function(response) {
-            resolve(self.makeMarker(response));
-          }, function(error) {
-            reject(Error("Failed!" + error));
-          });
+          self.makeMarkerFromSpecificAddress(resolve, reject);
         } else {
-          // no addresses found, so let's fallback to  neighborhood
-          if (Neighborhoods[self.neighborhood]) {
-            var location = new LatLong(self.neighborhood).addRandomness();
-            self.displayNeighborhood = self.neighborhood.replace("-", " ").capitalize();
-            resolve(self.makeMarker(location));
-          } else {
-            // neighborhood lat-long not known yet
-            console.log(self.neighborhood);
-          }
+          self.makeMarkerFromNeighborhood(resolve, reject);
         }
       }, function(error) {
         reject(Error("Failed!" + error));
       });
     });
+  };
+
+  Article.prototype.makeMarkerFromSpecificAddress = function(resolve, reject) {
+    var self = this;
+    new Address(self.address).toLatLong().then(function(response) {
+      resolve(self.makeMarker(response));
+    }, function(error) {
+      reject(Error("Failed!" + error));
+    });
+  };
+
+  Article.prototype.makeMarkerFromNeighborhood = function(resolve, reject) {
+    var self = this;
+    if (Neighborhoods[self.neighborhood]) {
+      var location = new LatLong(self.neighborhood).addRandomness();
+      self.displayNeighborhood = self.neighborhood.replace("-", " ").capitalize();
+      resolve(self.makeMarker(location));
+    } else {
+      // neighborhood lat-long not known yet
+      console.log(self.neighborhood);
+    }
   };
 
   Article.prototype.makeMarker = function (location) {
