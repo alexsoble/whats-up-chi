@@ -15,7 +15,7 @@ function initializeGeocoder () {
       Geocoder.geocode({ 'address': full_string }, function(results, status) {
         if (status === GoogleMaps.GeocoderStatus.OK) {
           var r = results[0].geometry.location;
-          resolve([r['H'], r['L']]);
+          resolve([r.lat(), r.lng()]);
         } else {
           reject(Error('Geocode was not successful for the following reason: ' + status));
         }
